@@ -256,10 +256,12 @@ def main(args):
         doLog(logfile,'Input pdb2 not found. Exiting...',commandName='atomMapping')
         sys.exit(0)
     pid = os.getpid()
-    pdbName1,atomNameID1,sigmaHoleID1 = reformatPDB(args.i1,1,pid)
-    pdbName2,atomNameID2,sigmaHoleID2 = reformatPDB(args.i2,2,pid)
-    mol1 = Chem.MolFromPDBFile(pdbName1,removeHs=False,sanitize=False)
-    mol2 = Chem.MolFromPDBFile(pdbName2,removeHs=False,sanitize=False)
+    with tempfile.NamedTemporaryFile(suffix = '.pdb') as tmp:
+        atomNameID1,sigmaHoleID1 = reformatPDB(args.i1,tmp.name)
+        mol1 = Chem.MolFromPDBFile(tmp.name,removeHs=False,sanitize=False)
+    with tempfile.NamedTemporaryFile(suffix = '.pdb') as tmp:
+        atomNameID2,sigmaHoleID2 = reformatPDB(args.i2, tmp.name)
+        mol2 = Chem.MolFromPDBFile(tmp.name,removeHs=False,sanitize=False)
     try:
         Chem.SanitizeMol(mol1)
     except:
@@ -268,8 +270,7 @@ def main(args):
         Chem.SanitizeMol(mol2)
     except:
         pass
-    os.remove(pdbName1)
-    os.remove(pdbName2)
+
 
 #####################################
     ## prepare molecules for MCS ####

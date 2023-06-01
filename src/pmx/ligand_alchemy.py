@@ -17,12 +17,12 @@ try:
     from rdkit.Chem import FragmentMatcher, Crippen, rdmolops
 except:
     print('RDKit imports failed')
-
+import tempfile
 
 # ================
 # Helper functions
 # ================
-def reformatPDB(fname,num,randint=42,bStrict=False):
+def reformatPDB(fname, outname, bStrict=False):
     """Higher level command to read, format and call a pdb writer.
 
     Params
@@ -37,15 +37,14 @@ def reformatPDB(fname,num,randint=42,bStrict=False):
         limit atom names to 3 char (default False)
     Returns
     -------
-    newname : str
-        name of the output pdb
     atomNameID : dict
         dict[a.id] = a.name
     sigmaHoleID : array
         atom IDs for sigmaholes array = [a.id]
     """
 
-    newname = "tempFormat_"+str(randint)+'_'+str(num)+".pdb"
+    # newname = "tempFormat_"+str(randint)+'_'+str(num)+".pdb"
+
     m = Model().read(fname)
 
     # adjust atom names and remember the changes
@@ -61,8 +60,8 @@ def reformatPDB(fname,num,randint=42,bStrict=False):
         atomNameID[a.id] = a.name
         a.name = newAtomName
 
-    writeFormatPDB(newname,m,bStrict=bStrict)
-    return(newname,atomNameID,sigmaHoleID)
+    writeFormatPDB(outname,m,bStrict=bStrict)
+    return(atomNameID,sigmaHoleID)
 
 def writeFormatPDB(fname,m,title="",nr=1,bStrict=False):
     """Writes formatted pdb of a ligand.
@@ -322,19 +321,19 @@ def superimposeStructures( fname1, fname2, m3, m2, plst, logfile ):
     ################################################
     doLog(logfile,'Superimposing mol2 on mol1')
     # mol1
-    try:
-        pdbName1,atomNameDict1,fooSH = reformatPDB(fname1,1)
-    except:
-        pdbName1,atomNameDict1,fooSH = reformatPDB(fname1,1,bStrict=True)
-    mol1 = Chem.MolFromPDBFile(pdbName1,removeHs=False,sanitize=False)
-    os.remove(pdbName1)
+    with tempfile.NamedTemporaryFile(suffix = '.pdb') as tmp:
+        try:
+            atomNameDict1,fooSH = reformatPDB(fname1,tmp.name)
+        except:
+            atomNameDict1,fooSH = reformatPDB(fname1,tmp.name,bStrict=True)
+        mol1 = Chem.MolFromPDBFile(tmp.name,removeHs=False,sanitize=False)
     # mol2
-    try:
-        pdbName2,atomNameDict2,fooSH = reformatPDB(fname2,2)
-    except:
-        pdbName2,atomNameDict2,fooSH = reformatPDB(fname2,2,bStrict=True)
-    mol2 = Chem.MolFromPDBFile(pdbName2,removeHs=False,sanitize=False)
-    os.remove(pdbName2)
+    with tempfile.NamedTemporaryFile(suffix = '.pdb') as tmp:
+        try:
+            atomNameDict2,fooSH = reformatPDB(fname2,tmp.name)
+        except:
+            atomNameDict2,fooSH = reformatPDB(fname2,tmp.name,bStrict=True)
+        mol2 = Chem.MolFromPDBFile(tmp.name,removeHs=False,sanitize=False)
     # create a backup of mol2 for later
     mol2backup = cp.deepcopy(mol2)
     # fit
