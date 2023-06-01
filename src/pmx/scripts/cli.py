@@ -89,8 +89,9 @@ def check_unknown_cmd(unknowns):
 
     for cmd in unknowns:
         if cmd not in expected:
-            print('Unknown command found in your command line: "{}". '
-                  'This command will be ignored'.format(cmd))
+            # print('Unknown command found in your command line: "{}". '
+            #       'This command will be ignored'.format(cmd))
+            pass
 
 
 def entry_point():

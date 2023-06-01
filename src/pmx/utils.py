@@ -377,7 +377,7 @@ def removeBackups(dir, check=True):
 def doLog(fp, s, commandName='ligandHybridTop'):
     l = '{0}__log_> {1}'.format(commandName,s)
 #   print(sys.stderr,l)
-    print(l)
+    # print(l)
     fp.write(l+'\n')
 
 def data2gauss(data):
