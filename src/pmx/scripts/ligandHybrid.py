@@ -295,7 +295,7 @@ def main(args):
     # fitting (optional)
 
 #    if(bFit==True):
-    superimposeStructures( args.i1, args.i2, m3, m2, plst, logfile )
+    # superimposeStructures( args.i1, args.i2, m3, m2, plst, logfile )
 
 #####################################
     # initialize the main object of the LigandHybridTopology class
