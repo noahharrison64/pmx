@@ -2348,7 +2348,8 @@ class LigandHybridTopology:
                 doLog(self.logfile, "A-> Atom1: %d-%s Atom2: %d-%s" %(a1.id, a1.name, a2.id, a2.name))
                 doLog(self.logfile, "B-> Atom1: %d-%s Atom2: %d-%s" %(a1.idB, a1.nameB, a2.idB, a2.nameB))
                 doLog(self.logfile,"Exiting....")
-                sys.exit(1)
+                raise RuntimeError("Something went wrong while assigning bonds")
+                # sys.exit(1)
 
 #####################################
         # second molecule bonds
@@ -2448,7 +2449,8 @@ class LigandHybridTopology:
                 doLog(self.logfile, "B-> Atom1: %d-%s Atom2: %d-%s Atom3: %d-%s" \
                        %(a1.idB, a1.nameB, a2.idB, a2.nameB, a3.idB, a3.nameB))
                 doLog(self.logfile,"Exiting....")
-                sys.exit(1)
+                raise RuntimeError("Something went wrong while assigning angles")
+                # sys.exit(1)
 
 #####################################
         # second molecule angles
@@ -2560,7 +2562,8 @@ class LigandHybridTopology:
                 doLog(self.logfile, "B-> Atom1: %d-%s Atom2: %d-%s Atom3: %d-%s Atom3: %d-%s" \
                        %(a1.idB, a1.nameB, a2.idB, a2.nameB, a3.idB, a3.nameB, a4.idB, a4.nameB))
                 doLog(self.logfile,"Exiting....")
-                sys.exit(1)
+                raise RuntimeError("Something went wrong while assigning dihedrals")
+                # sys.exit(1)
 
 #####################################
         # second molecule dihedrals
@@ -2622,7 +2625,8 @@ class LigandHybridTopology:
                 doLog(self.logfile, "B-> Atom1: %d-%s Atom2: %d-%s Atom3: %d-%s Atom3: %d-%s" \
                        %(a1.idB, a1.nameB, a2.idB, a2.nameB, a3.idB, a3.nameB, a4.idB, a4.nameB))
                 doLog(self.logfile,"Exiting....")
-                sys.exit(1)
+                raise RuntimeError("Something went wrong while assigning dihedrals")
+                # sys.exit(1)
 
     def _gen_dih_entry2(self, a1,a2,a3,a4,dihtype,entry=None,entryB=None,scDumA=1.0,scDumB=1.0):
         dihList = []
@@ -2827,7 +2831,8 @@ class LigandHybridTopology:
                 return(True)
             elif v[0].id==xs[0].id and v[1].id==xs[1].id and v[2].id==xs[2].id:
                 print("ERROR: it seems that vsites2 are to be morphed. Gromacs does not support that")
-                sys.exit(0)
+            
+                # sys.exit(0)
         return(False)
 
     def _check_if_vsite3_exists( self, vsites, xs):
@@ -2852,12 +2857,15 @@ class LigandHybridTopology:
             if excl[0]==ex[0]: # some interactions for this atom are already excluded
                 if len(excl)!=len(ex): # the exclusion lists are of different length
                     print('ERROR: Something wrong with exclusions: ',excl,ex)
-                    sys.exit(0)
+                    raise RuntimeError("Something went wrong with exclusions")
+                    # sys.exit(0)
                 else:
                     for e in excl[1:]:
                         if e not in ex:
                             print('ERROR: Something wrong with exclusions: ',excl,ex)
-                            sys.exit(0)
+                            raise RuntimeError("Something went wrong with exclusions")
+
+                            # sys.exit(0)
         return(True)
 
 

@@ -231,7 +231,8 @@ def main(args):
     bMCS = args.mcs
     if bMCS==False and bAlignment==False:
         doLog(logfile,"No method (alignment, mcs) was selected.",commandName='atomMapping')
-        sys.exit(0)
+        raise RuntimeError("No method (alignment, mcs) was selected.")
+        # sys.exit(0)
     doLog(logfile,"Morphable atoms will be identified using the following methods:",commandName='atomMapping')
     doLog(logfile,"Alignment: {0}".format(bAlignment),commandName='atomMapping')
     doLog(logfile,"MCS: {0}".format(bMCS),commandName='atomMapping')
@@ -251,10 +252,12 @@ def main(args):
     # reformat PDB to read two letter atoms properly (why does it have to be so painful?)
     if not os.path.exists( args.i1 ):
         doLog(logfile,'Input pdb1 not found. Exiting...',commandName='atomMapping')
-        sys.exit(0)
+        raise RuntimeError("Input pdb1 not found. Exiting...")
+        # sys.exit(0)
     if not os.path.exists( args.i2 ):
         doLog(logfile,'Input pdb2 not found. Exiting...',commandName='atomMapping')
-        sys.exit(0)
+        raise RuntimeError("Input pdb2 not found. Exiting...")
+        # sys.exit(0)
     pid = os.getpid()
     with tempfile.NamedTemporaryFile(suffix = '.pdb') as tmp:
         atomNameID1,sigmaHoleID1 = reformatPDB(args.i1,tmp.name)
@@ -430,7 +433,8 @@ def main(args):
     if( len(n1) != len(n2) ):
         doLog(logfile,"ERROR: something went wrong.",commandName='atomMapping')
         doLog(logfile,"ERROR: Number of the morphable atoms in the ligands does not match.",commandName='atomMapping')
-        sys.exit(1)
+        raise RuntimeError("ERROR: Number of the morphable atoms in the ligands does not match.")
+        # sys.exit(1)
 
 #########################
     # calculate score
