@@ -1498,7 +1498,7 @@ def _add_extra_DNA_RNA_impropers(topol, rlist, func_type, stateA, stateB):
 # Classes
 # =======
 class AbsRestraints:
-    '''Identifies a set of restraints as defined by Boresch between the
+    """Identifies a set of restraints as defined by Boresch between the
     protein/host and ligand/guest molecule. [5]_ ::
 
                 (Pro)  p3 -- p2          l2   (Lig)
@@ -1570,7 +1570,7 @@ class AbsRestraints:
         free energy of restraining the ligand while decoupled. This is calculate
         with equation 32 in Boresch et al. [5]_
 
-    '''
+    """
     def __init__(self, protein=None, ligand=None, complex=None, ligname=None,
                  pro_ids=None, lig_ids=None,
                  kbond=4184, kangle=41.84, kdihedral=41.84,
