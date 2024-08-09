@@ -193,10 +193,10 @@ def integrate_dgdl(fn, ndata=-1, lambda0=0, invert_values=False, sigmoid=0.0):
         y.reverse()
 
     if invert_values is True:
-        integr = simps(y, x) * (-1)
+        integr = simps(y=y, x=x) * (-1)
         return integr, ndata
     else:
-        integr = simps(y, x)
+        integr = simps(y=y, x=x)
         return integr, ndata
 
 
