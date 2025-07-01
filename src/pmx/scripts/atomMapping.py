@@ -182,9 +182,12 @@ Provided two structures find atoms to be morphed.
                         type=int,
                         help='Maximum time (s) for an MCS search (default 10 s).',
                         default=10)
-
+    parser.add_argument("--conect",
+                        dest="conect",
+                        help="Read CONECT entries from pdb files (default False)",
+                        action="store_true")
     parser.set_defaults(alignment=True,mcs=True,H2H=True,H2Hpolar=False,H2Heavy=False,
-                        RingsOnly=False,dMCS=False,swap=False,chirality=True)
+                        RingsOnly=False,dMCS=False,swap=False,chirality=True, conect=False)
     args, unknown = parser.parse_known_args()
     check_unknown_cmd(unknown)
 
@@ -220,6 +223,7 @@ def main(args):
     d = args.d
     timeout = args.timeout
     bdMCS = args.dMCS 
+    bCONECT = args.conect
 
 #####################################
     # log file
@@ -260,11 +264,11 @@ def main(args):
         # sys.exit(0)
     pid = os.getpid()
     with tempfile.NamedTemporaryFile(suffix = '.pdb') as tmp:
-        atomNameID1,sigmaHoleID1 = reformatPDB(args.i1,tmp.name)
-        mol1 = Chem.MolFromPDBFile(tmp.name,removeHs=False,sanitize=False)
+        atomNameID1,sigmaHoleID1 = reformatPDB(args.i1,tmp.name, bCONECT=bCONECT)
+        mol1 = Chem.MolFromPDBFile(tmp.name,removeHs=False,sanitize=False,proximityBonding=(not bCONECT))
     with tempfile.NamedTemporaryFile(suffix = '.pdb') as tmp:
-        atomNameID2,sigmaHoleID2 = reformatPDB(args.i2, tmp.name)
-        mol2 = Chem.MolFromPDBFile(tmp.name,removeHs=False,sanitize=False)
+        atomNameID2,sigmaHoleID2 = reformatPDB(args.i2, tmp.name, bCONECT=bCONECT)
+        mol2 = Chem.MolFromPDBFile(tmp.name,removeHs=False,sanitize=False,proximityBonding=(not bCONECT))
     try:
         Chem.SanitizeMol(mol1)
     except:

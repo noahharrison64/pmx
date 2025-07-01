@@ -362,8 +362,10 @@ class Model(Atomselection):
                 r.chain = ch
                 r.chain_id = ch.id
 
-    def __readPDB(self, fname=None, pdbline=None):
+    def __readPDB(self, fname=None, pdbline=None, bCONECT=False):
         """Reads a PDB file"""
+        if bCONECT:
+            self._pdb_conect = []
         if pdbline:
             lines = pdbline.split('\n')
         else:
@@ -374,6 +376,8 @@ class Model(Atomselection):
                 self.atoms.append(a)
             if line[:6] == 'CRYST1':
                 self.box = _p.box_from_cryst1(line)
+            if bCONECT and line[:6] == "CONECT":
+                self._pdb_conect.append(line.strip())
         self.make_chains()
         self.make_residues()
         self.unity = 'A'
@@ -632,7 +636,7 @@ class Model(Atomselection):
         else:
             self.moltype = 'unknown'
 
-    def read(self, filename, bPDBTER=False, bNoNewID=True, bPDBGAP=False, bPDBMASS=False):
+    def read(self, filename, bPDBTER=False, bNoNewID=True, bPDBGAP=False, bPDBMASS=False, bCONECT=False):
         """PDB/GRO file reader.
 
         Parameters
@@ -647,6 +651,8 @@ class Model(Atomselection):
             True. Default is True.
         bPDBGAP : bool
             whether search for gaps in the chain to assign new chain IDs.
+        bCONECT : bool
+            whether to read CONECT entries from PDB
         """
         ext = filename.split('.')[-1]
         if ext == 'pdb':
@@ -655,7 +661,7 @@ class Model(Atomselection):
                                          pdbline=None,
                                          bNoNewID=bNoNewID, bPDBGAP=bPDBGAP, bPDBMASS=bPDBMASS)
             else:
-                return self.__readPDB(fname=filename)
+                return self.__readPDB(fname=filename, bCONECT=bCONECT)
         elif ext == 'gro':
             return self.__readGRO(filename)
         else:

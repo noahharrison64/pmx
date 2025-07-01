@@ -22,19 +22,18 @@ import tempfile
 # ================
 # Helper functions
 # ================
-def reformatPDB(fname, outname, bStrict=False):
+def reformatPDB(fname, outname, bStrict=False, bCONECT=False):
+
     """Higher level command to read, format and call a pdb writer.
 
     Params
     ------
     fname : str
         input structure file name
-    num : int
-        number to mark the output pdb
-    randint : int
-        random number to mark the output pdb
     bStrict : bool
         limit atom names to 3 char (default False)
+            bCONECT : bool
+        read CONECT entries from pdb (default False)
     Returns
     -------
     atomNameID : dict
@@ -45,7 +44,7 @@ def reformatPDB(fname, outname, bStrict=False):
 
     # newname = "tempFormat_"+str(randint)+'_'+str(num)+".pdb"
 
-    m = Model().read(fname)
+    m = Model().read(fname,bCONECT=bCONECT)
 
     # adjust atom names and remember the changes
     atomNameID = {}
@@ -60,10 +59,10 @@ def reformatPDB(fname, outname, bStrict=False):
         atomNameID[a.id] = a.name
         a.name = newAtomName
 
-    writeFormatPDB(outname,m,bStrict=bStrict)
+    writeFormatPDB(outname,m,_conect_entries=m._pdb_conect if bCONECT else None)
     return(atomNameID,sigmaHoleID)
 
-def writeFormatPDB(fname,m,title="",nr=1,bStrict=False):
+def writeFormatPDB(fname,m,title="",nr=1,bStrict=False,_conect_entries=None):
     """Writes formatted pdb of a ligand.
 
     Params
@@ -78,6 +77,8 @@ def writeFormatPDB(fname,m,title="",nr=1,bStrict=False):
         currently not used 
     bStrict : bool
         limit atom names to 3 char (default False)
+    _conect_entries : list
+        List of conect entries
     Returns
     -------
     None
@@ -104,6 +105,9 @@ def writeFormatPDB(fname,m,title="",nr=1,bStrict=False):
             print(foo,file=fp)
         else:
             print(atom,file=fp)
+    if _conect_entries is not None:
+        for line in _conect_entries:
+            fp.write(f"{line}\n")
     fp.write('ENDMDL\n')
     fp.close()
 
